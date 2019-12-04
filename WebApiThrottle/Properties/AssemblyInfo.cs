@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("Throttling handler and filter for ASP.NET Web API v2")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("stefanprodan.com")]
-[assembly: AssemblyProduct("WebApiThrottle")]
+[assembly: AssemblyProduct("AscensionGameDev.WebApiThrottle")]
 [assembly: AssemblyCopyright("Copyright Stefan Prodan © 2013-2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
