@@ -1,16 +1,16 @@
 WebApiThrottle
 ==============
 
-[![Build status](https://ci.appveyor.com/api/projects/status/vdvuhk2c0tqds297?svg=true)](https://ci.appveyor.com/project/stefanprodan/webapithrottle) 
+[![Build status](https://ci.appveyor.com/api/projects/status/vdvuhk2c0tqds297?svg=true)](https://ci.appveyor.com/project/stefanprodan/webapithrottle)
 [![NuGet](https://img.shields.io/nuget/v/WebApiThrottle.svg)](https://www.nuget.org/packages/WebApiThrottle)
 
-ASP.NET Web API Throttling handler, OWIN middleware and filter are designed to control the rate of requests that clients 
-can make to a Web API based on IP address, client API key and request route. 
+ASP.NET Web API Throttling handler, OWIN middleware and filter are designed to control the rate of requests that clients
+can make to a Web API based on IP address, client API key and request route.
 WebApiThrottle package is available on NuGet at [nuget.org/packages/WebApiThrottle](https://www.nuget.org/packages/WebApiThrottle/).
 
-Web API throttling can be configured using the built-in ThrottlePolicy. You can set multiple limits 
+Web API throttling can be configured using the built-in ThrottlePolicy. You can set multiple limits
 for different scenarios like allowing an IP or Client to make a maximum number of calls per second, per minute, per hour per day or even per week.
-You can define these limits to address all requests made to an API or you can scope the limits to each API route.  
+You can define these limits to address all requests made to an API or you can scope the limits to each API route.
 
 ---
 If you are looking for the ASP.NET Core version please head to [AspNetCoreRateLimit](https://github.com/stefanprodan/AspNetCoreRateLimit) project.
@@ -21,7 +21,7 @@ AspNetCoreRateLimit is a full rewrite of WebApiThrottle and offers more flexibil
 
 ### Global throttling based on IP
 
-The setup bellow will limit the number of requests originated from the same IP. 
+The setup bellow will limit the number of requests originated from the same IP.
 If from the same IP, in same second, you'll make a call to <code>api/values</code> and <code>api/values/1</code> the last call will get blocked.
 
 ``` cs
@@ -48,7 +48,7 @@ public class Startup
 {
     public void Configuration(IAppBuilder appBuilder)
     {
-        // Configure Web API for self-host. 
+        // Configure Web API for self-host.
         HttpConfiguration config = new HttpConfiguration();
 
         //Register throttling handler
@@ -85,7 +85,7 @@ config.MessageHandlers.Add(new ThrottlingHandler()
 
 ### Endpoint throttling based on IP and Client Key
 
-If a client (identified by an unique API key) from the same IP, in the same second, makes two calls to <code>api/values</code>, then the last call will get blocked. 
+If a client (identified by an unique API key) from the same IP, in the same second, makes two calls to <code>api/values</code>, then the last call will get blocked.
 If you want to apply limits to clients regardless of their IPs then you should set IpThrottling to false.
 
 ``` cs
@@ -112,7 +112,7 @@ config.MessageHandlers.Add(new ThrottlingHandler()
 	{
 		IpThrottling = true,
 		IpWhitelist = new List<string> { "::1", "192.168.0.0/24" },
-		
+
 		ClientThrottling = true,
 		ClientWhitelist = new List<string> { "admin-key" }
 	},
@@ -131,14 +131,14 @@ config.MessageHandlers.Add(new ThrottlingHandler()
 	{
 		IpThrottling = true,
 		IpRules = new Dictionary<string, RateLimits>
-		{ 
+		{
 			{ "192.168.1.1", new RateLimits { PerSecond = 2 } },
 			{ "192.168.2.0/24", new RateLimits { PerMinute = 30, PerHour = 30*60, PerDay = 30*60*24 } }
 		},
-		
+
 		ClientThrottling = true,
 		ClientRules = new Dictionary<string, RateLimits>
-		{ 
+		{
 			{ "api-client-key-1", new RateLimits { PerMinute = 40, PerHour = 400 } },
 			{ "api-client-key-9", new RateLimits { PerDay = 2000 } }
 		}
@@ -148,10 +148,10 @@ config.MessageHandlers.Add(new ThrottlingHandler()
 ```
 ### Endpoint custom rate limits
 
-You can also define custom limits for certain routes, these limits will override the default ones. 
-You can define endpoint rules by providing relative routes like <code>api/entry/1</code> or just a URL segment like <code>/entry/</code>. 
-The endpoint throttling engine will search for the expression you've provided in the absolute URI, 
-if the expression is contained in the request route then the rule will be applied. 
+You can also define custom limits for certain routes, these limits will override the default ones.
+You can define endpoint rules by providing relative routes like <code>api/entry/1</code> or just a URL segment like <code>/entry/</code>.
+The endpoint throttling engine will search for the expression you've provided in the absolute URI,
+if the expression is contained in the request route then the rule will be applied.
 If two or more rules match the same URI then the lower limit will be applied.
 
 ``` cs
@@ -163,7 +163,7 @@ config.MessageHandlers.Add(new ThrottlingHandler()
 		ClientThrottling = true,
 		EndpointThrottling = true,
 		EndpointRules = new Dictionary<string, RateLimits>
-		{ 
+		{
 			{ "api/search", new RateLimits { PerSecond = 10, PerMinute = 100, PerHour = 1000 } }
 		}
 	},
@@ -173,7 +173,7 @@ config.MessageHandlers.Add(new ThrottlingHandler()
 
 ### Stack rejected requests
 
-By default, rejected calls are not added to the throttle counter. If a client makes 3 requests per second 
+By default, rejected calls are not added to the throttle counter. If a client makes 3 requests per second
 and you've set a limit of one call per second, the minute, hour and day counters will only record the first call, the one that wasn't blocked.
 If you want rejected requests to count towards the other limits, you'll have to set <code>StackBlockedRequests</code> to true.
 
@@ -206,12 +206,12 @@ config.MessageHandlers.Add(new ThrottlingHandler()
 Config example (policyType values are 1 - IP, 2 - ClientKey, 3 - Endpoint):
 ``` xml
 <configuration>
-  
+
   <configSections>
-    <section name="throttlePolicy" 
+    <section name="throttlePolicy"
              type="WebApiThrottle.ThrottlePolicyConfiguration, WebApiThrottle" />
   </configSections>
-  
+
   <throttlePolicy limitPerSecond="1"
                   limitPerMinute="10"
                   limitPerHour="30"
@@ -244,11 +244,11 @@ Config example (policyType values are 1 - IP, 2 - ClientKey, 3 - Endpoint):
   </throttlePolicy>
 
 </configuration>
-``` 
+```
 
 ### Retrieving API Client Key
 
-By default, the ThrottlingHandler retrieves the client API key from the "Authorization-Token" request header value. 
+By default, the ThrottlingHandler retrieves the client API key from the "Authorization-Token" request header value.
 If your API key is stored differently, you can override the <code>ThrottlingHandler.SetIdentity</code> function and specify your own retrieval method.
 
 ``` cs
@@ -266,21 +266,21 @@ public class CustomThrottlingHandler : ThrottlingHandler
 }
 ```
 
-### Storing throttle metrics 
+### Storing throttle metrics
 
-WebApiThrottle stores all request data in-memory using ASP.NET Cache when hosted in IIS or Runtime MemoryCache when self-hosted with Owin. If you want to change the storage to Velocity, Redis or a NoSQL database, all you have to do is create your own repository by implementing the <code>IThrottleRepository</code> interface. 
+WebApiThrottle stores all request data in-memory using ASP.NET Cache when hosted in IIS or Runtime MemoryCache when self-hosted with Owin. If you want to change the storage to Velocity, Redis or a NoSQL database, all you have to do is create your own repository by implementing the <code>IThrottleRepository</code> interface.
 
 ``` cs
 public interface IThrottleRepository
 {
 	bool Any(string id);
-	
+
 	ThrottleCounter? FirstOrDefault(string id);
-	
+
 	void Save(string id, ThrottleCounter throttleCounter, TimeSpan expirationTime);
-	
+
 	void Remove(string id);
-	
+
 	void Clear();
 }
 ```
@@ -291,16 +291,16 @@ Since version 1.2 there is an interface for storing and retrieving the policy ob
 public interface IPolicyRepository
 {
     ThrottlePolicy FirstOrDefault(string id);
-    
+
     void Remove(string id);
-    
+
     void Save(string id, ThrottlePolicy policy);
 }
 ```
 
 ### Update rate limits at runtime
 
-In order to update the policy object at runtime you'll need to use the new <code>ThrottlingHandler</code> constructor along with <code>ThrottleManager.UpdatePolicy</code> function introduced in WebApiThrottle v1.2.  
+In order to update the policy object at runtime you'll need to use the new <code>ThrottlingHandler</code> constructor along with <code>ThrottleManager.UpdatePolicy</code> function introduced in WebApiThrottle v1.2.
 
 Register the <code>ThrottlingHandler</code> providing <code>PolicyCacheRepository</code> in the constructor, if you are self-hosting the service with Owin then use <code>PolicyMemoryCacheRepository</code>:
 
@@ -321,11 +321,11 @@ public static void Register(HttpConfiguration config)
         {
             //scope to IPs
             IpThrottling = true,
-            
+
             //scope to clients
             ClientThrottling = true,
             ClientRules = new Dictionary<string, RateLimits>
-            { 
+            {
                 { "api-client-key-1", new RateLimits { PerMinute = 60, PerHour = 600 } },
                 { "api-client-key-2", new RateLimits { PerDay = 5000 } }
             },
@@ -333,13 +333,13 @@ public static void Register(HttpConfiguration config)
             //scope to endpoints
             EndpointThrottling = true
         },
-        
+
         //replace with PolicyMemoryCacheRepository for Owin self-host
         policyRepository: new PolicyCacheRepository(),
-        
+
         //replace with MemoryCacheRepository for Owin self-host
         repository: new CacheRepository(),
-        
+
         logger: new TracingThrottleLogger(traceWriter)));
 }
 
@@ -372,7 +372,7 @@ public void UpdateRateLimits()
 
 ### Logging throttled requests
 
-If you want to log throttled requests you'll have to implement IThrottleLogger interface and provide it to the ThrottlingHandler. 
+If you want to log throttled requests you'll have to implement IThrottleLogger interface and provide it to the ThrottlingHandler.
 
 ``` cs
 public interface IThrottleLogger
@@ -386,12 +386,12 @@ Logging implementation example with ITraceWriter
 public class TracingThrottleLogger : IThrottleLogger
 {
     private readonly ITraceWriter traceWriter;
-        
+
     public TracingThrottleLogger(ITraceWriter traceWriter)
     {
         this.traceWriter = traceWriter;
     }
-       
+
     public void Log(ThrottleLogEntry entry)
     {
         if (null != traceWriter)
@@ -412,7 +412,7 @@ var traceWriter = new SystemDiagnosticsTraceWriter()
 };
 config.Services.Replace(typeof(ITraceWriter), traceWriter);
 config.EnableSystemDiagnosticsTracing();
-            
+
 config.MessageHandlers.Add(new ThrottlingHandler()
 {
 	Policy = new ThrottlePolicy(perSecond: 1, perMinute: 30)
@@ -435,13 +435,13 @@ Setup the filter as you would the ThrottlingHandler:
 ``` cs
 config.Filters.Add(new ThrottlingFilter()
 {
-    Policy = new ThrottlePolicy(perSecond: 1, perMinute: 20, 
+    Policy = new ThrottlePolicy(perSecond: 1, perMinute: 20,
     perHour: 200, perDay: 2000, perWeek: 10000)
     {
         //scope to IPs
         IpThrottling = true,
         IpRules = new Dictionary<string, RateLimits>
-        { 
+        {
             { "::1/10", new RateLimits { PerSecond = 2 } },
             { "192.168.2.1", new RateLimits { PerMinute = 30, PerHour = 30*60, PerDay = 30*60*24 } }
         },
@@ -451,7 +451,7 @@ config.Filters.Add(new ThrottlingFilter()
         //scope to clients (if IP throttling is applied then the scope becomes a combination of IP and client key)
         ClientThrottling = true,
         ClientRules = new Dictionary<string, RateLimits>
-        { 
+        {
             { "api-client-key-demo", new RateLimits { PerDay = 5000 } }
         },
         //white list API keys that don’t require throttling
@@ -539,7 +539,7 @@ There is an example implementation in the WebApiThrottle.Demo project - <code>We
 ``` cs
 config.MessageHandlers.Add(new ThrottlingHandler(
     policy: new ThrottlePolicy(perMinute: 20, perHour: 30, perDay: 35, perWeek: 3000)
-    {        
+    {
         IpThrottling = true,
         ///...
     },
@@ -556,7 +556,7 @@ If you want to customize the quota exceeded response you can set the properties 
 ``` cs
 config.MessageHandlers.Add(new ThrottlingHandler(
     policy: new ThrottlePolicy(perMinute: 20, perHour: 30, perDay: 35, perWeek: 3000)
-    {        
+    {
         IpThrottling = true,
         ///...
     },
@@ -564,3 +564,13 @@ config.MessageHandlers.Add(new ThrottlingHandler(
     QuotaExceededResponseCode = HttpStatusCode.ServiceUnavailable,
     QuotaExceededMessage = "Too many calls! We can only allow {0} per {1}"));
 ```
+
+### Packaging
+
+From the current directory execute the following to package the library:
+
+```
+nuget pack -Build -Version <version> path/to/WebApiThrottle.nuspec
+```
+
+Example: `nuget pack -Build -Version 1.5.4.2 ..\..\WebApiThrottle.nuspec` from `bin\Release`.

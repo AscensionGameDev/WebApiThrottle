@@ -198,7 +198,6 @@ namespace WebApiThrottle
                         // break execution
                         response.StatusCode = (int)QuotaExceededResponseCode;
                         response.ReasonPhrase = string.Format(message, rateLimit, rateLimitPeriod);
-
                         response.Headers.Add("Retry-After", new[] { core.RetryAfterFrom(throttleCounter.Timestamp, rateLimitPeriod) });
 
                         return;
